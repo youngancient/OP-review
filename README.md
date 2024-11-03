@@ -2,11 +2,10 @@
 | :------------- | :---------------------------------------------- |
 | Title          | Smart Contract Audit Report                     |
 | Target         | PreimageOracle.sol                         |
-| Version        | 1.0                                             |
-| Author         | [Jude Tochy](https://github.com/youngancient) |
+| Version         | 1.0.0                        |
+| Author         | [YoungAncient](https://github.com/youngancient) |
 | Classification | Public                                          |
-| Status         | Draft                                           |
-| Date Created   | November 2, 2024                                |
+| Date Created   | November 3, 2024                                |
 
 ## Table of contents
 
@@ -40,47 +39,27 @@ My audit of this smart contract is based on the provided information and my expe
 
 ### <h3 id="About">1.2 🚀 About Me <h3>
 
-Hello, I'm Samuel Dahunsi, a Smart Contract Developer. Currently, I'm gaining experience through an internship at Web3bridge, where I am focused on advancing my knowledge and skills in blockchain development.
+Hello, I'm YoungAncient, a Smart Contract Developer. Currently, I'm gaining experience through an internship at Web3bridge, where I am focused on advancing my knowledge and skills in blockchain development.
 
-As a developer, I have a strong passion for creating smart contracts that prioritize security and efficiency, with the potential to revolutionize our interactions with technology. I am dedicated to continuously learning and exploring new technologies to stay at the forefront of this rapidly evolving field.
+Currently interested in architecture, security and scalablity of blockchain protocols.
 
 ### <h3 id="Skills">1.3 🛠 Skills <h3>
 
-Solidity, Diamond Standard, Foundry, Hardhat, Wagmi, Ethers.js, React, Javascript, HTML, CSS ...
+Solidity, Diamond Standard, Foundry, Hardhat, Wagmi, Ethers.js, React, Next js, Typescript.
 
 ### <h3 id="links">1.4 🔗 Links <h3>
 
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://portfolio-sammy.vercel.app/)
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/samuel-dahunsi/)
-[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/psalmuel1st)
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://youngancient.vercel.app/)
+[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/YoungAncient)
 
-### <h3 id="Cpg">1.5 Compound Governance<h3>
+### <h3 id="Cpg">1.5 <Contract_Concept_Name><h3>
 
-Compound protocol is a decentralized protocol which establishes money markets with
-algorithmically set interest rates based on supply and demand, allowing users to frictionlessly
-exchange the time value of Ethereum assets.
+Explain context
 
-Compound Governance refers to the decentralized governance system employed by Compound Finance, a prominent decentralized finance (DeFi) protocol. Compound Finance is built on the Ethereum blockchain and provides lending and borrowing services for various cryptocurrencies.
 
-The governance mechanism allows token holders to participate in the decision-making process regarding the protocol's development, changes, and upgrades. The native token of Compound, COMP, plays a central role in this governance system.
+### <h3 id="Gbd">1.6 PreImageOracle<h3>
 
-#### Key aspects of Compound Governance include:
-
-1. COMP Token: COMP is the governance token of the Compound protocol. Holders of COMP can propose, discuss, and vote on changes to the protocol. The number of COMP tokens held by an individual determines their voting power.
-
-2. Proposal Creation: Any COMP holder can create a proposal to suggest changes to the protocol. Proposals can range from protocol parameter adjustments to adding new features.
-
-3. Voting: COMP holders can vote "for," "against," or "abstain" on proposed changes. The voting power is directly proportional to the number of COMP tokens held by the voter.
-
-4. Quorum and Approval: Proposals must meet a minimum quorum (a minimum number of votes) to be considered valid. Additionally, they require a certain percentage of "for" votes to be approved.
-
-5. Execution of Proposals: Once a proposal is approved, it can be executed, resulting in the implementation of the proposed changes.
-
-Compound Governance empowers the community to collectively govern the protocol, ensuring a decentralized and inclusive decision-making process for the platform's evolution and improvements.
-
-### <h3 id="Gbd">1.6 GovernorBravoDelegate<h3>
-
-The GovernorBravoDelegate contract is an implementation of the GovernorBravoDelegateStorageV2 and GovernorBravoEvents contracts, which are part of the governance system of the Compound protocol. The purpose of this contract is to allow token holders to propose and vote on changes to the protocol, such as adding new assets to the protocol or changing the interest rates of existing assets. The contract defines various constants and functions that set the parameters for the governance process, such as the minimum and maximum voting periods, the quorum votes required for a proposal to succeed, and the maximum number of actions that can be included in a proposal. Overall, the GovernorBravoDelegate contract plays a critical role in the decentralized governance of the Compound protocol.
+The PreImageOracle contract is an implementation ...
 
 ### <h3 id="scope">1.7 Scope <h3>
 
@@ -109,543 +88,533 @@ _(**Table: 1.7**: Compound GovernorBravoDelegate G2 Audit Scope)_
 
 ## <h2 id="review"> 2.0 CONTRACT REVIEW <h2>
 
-The contract contains the following state constant variables:
+The contract contains the following state constant and immutable variables:
 
 ```bash
-    string public constant name = "Compound Governor Bravo";
+    uint256 internal immutable CHALLENGE_PERIOD;
 ```
 
-This line defines a public constant string variable named name and assigns it the value "Compound Governor Bravo". This variable is used to store the name of the Governor Bravo contract.
+Explanation
 
 ```bash
-    uint public constant MIN_PROPOSAL_THRESHOLD = 50000e18; // 50,000 Comp
+    uint256 internal immutable MIN_LPP_SIZE_BYTES;
 ```
 
-This line defines a public constant unsigned integer variable named MIN_PROPOSAL_THRESHOLD and assigns it the value 50000e18. This variable is used to store the minimum amount of COMP tokens that a proposer must hold in order to create a proposal.
+Explanation
+
 
 ```bash
-    uint public constant MAX_PROPOSAL_THRESHOLD = 100000e18; //100,000 Comp
+    uint256 public constant MIN_BOND_SIZE = 0.25 ether;
 ```
 
-This line defines a public constant unsigned integer variable named MIN_PROPOSAL_THRESHOLD and assigns it the value 50000e18. This variable is used to store the minimum amount of COMP tokens that a proposer must hold in order to create a proposal.
+Explanation
 
 ```bash
-    uint public constant MIN_VOTING_PERIOD = 5760; // About 24 hours
+    uint256 public constant KECCAK_TREE_DEPTH = 16;
 ```
 
-This line defines a public constant variable called MIN_VOTING_PERIOD with a value of 5760. This value represents the minimum voting period that can be set in the governance system of the Compound protocol.
+Explanation
 
 ```bash
-    uint public constant MAX_VOTING_PERIOD = 80640; // About 2 weeks
+    uint256 public constant MAX_LEAF_COUNT = 2 ** KECCAK_TREE_DEPTH - 1;
 ```
 
-This line defines a public constant variable called MAX_VOTING_PERIOD with a value of 80640. This value represents the maximum voting period that can be set in the governance system of the Compound protocol.
+Explanation
 
 ```bash
-    uint public constant MIN_VOTING_DELAY = 1;
+    string public constant version = "1.0.0";
 ```
 
-This line defines a public constant variable called MIN_VOTING_DELAY with a value of 1. This value represents the minimum voting delay that can be set in the governance system of the Compound protocol.
+Explanation
+
+The contract contains the following state variables (mappings and struct):
 
 ```bash
-    uint public constant MAX_VOTING_DELAY = 40320; // About 1 week
+    mapping(bytes32 => uint256) public preimageLengths;
 ```
 
-This line defines a public constant variable called MAX_VOTING_DELAY with a value of 40320. This value represents the maximum voting delay that can be set in the governance system of the Compound protocol.
+Explanation
 
 ```bash
-    uint public constant quorumVotes = 400000e18; // 400,000 = 4% of Comp
+    mapping(bytes32 => mapping(uint256 => bytes32)) public preimageParts;
 ```
 
-This line defines a public constant variable called quorumVotes with a value of 400,000 multiplied by 10^18. This value represents the number of votes required for a quorum to be reached and for a vote to succeed in the governance system of the Compound protocol.
+Explanation
 
 ```bash
-    uint public constant proposalMaxOperations = 10; // 10 actions
+    mapping(bytes32 => mapping(uint256 => bool)) public preimagePartOk;
 ```
 
-This line defines a public constant variable called proposalMaxOperations with a value of 10. This value represents the maximum number of actions that can be included in a proposal in the governance system of the Compound protocol.
+Explanation
 
 ```bash
-    bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,uint256 chainId,address verifyingContract)");
-```
-
-This line defines a public constant variable called DOMAIN_TYPEHASH with a value generated by hashing the string "EIP712Domain(string name,uint256 chainId,address verifyingContract)" using the keccak256 hash function. This value represents the type hash of the contract's domain for use in EIP-712 signatures.
-
-```bash
-    bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-```
-
-This line defines a public constant variable called BALLOT_TYPEHASH with a value generated by hashing the string "Ballot(uint256 proposalId,uint8 support)" using the keccak256 hash function. This value represents the type hash of the ballot struct used by the contract for use in EIP-712 signatures.
-
-The following functions are part of the compound governance contract and are all carefully and thoroghly intertwined for optimum performance.
-
-### 2.1 initialize():
-
-```bash
-  function initialize(address timelock_, address comp_, uint votingPeriod_, uint votingDelay_, uint proposalThreshold_) public {
-        require(address(timelock) == address(0), "GovernorBravo::initialize: can only initialize once");
-        require(msg.sender == admin, "GovernorBravo::initialize: admin only");
-        require(timelock_ != address(0), "GovernorBravo::initialize: invalid timelock address");
-        require(comp_ != address(0), "GovernorBravo::initialize: invalid comp address");
-        require(votingPeriod_ >= MIN_VOTING_PERIOD && votingPeriod_ <= MAX_VOTING_PERIOD, "GovernorBravo::initialize: invalid voting period");
-        require(votingDelay_ >= MIN_VOTING_DELAY && votingDelay_ <= MAX_VOTING_DELAY, "GovernorBravo::initialize: invalid voting delay");
-        require(proposalThreshold_ >= MIN_PROPOSAL_THRESHOLD && proposalThreshold_ <= MAX_PROPOSAL_THRESHOLD, "GovernorBravo::initialize: invalid proposal threshold");
-
-        timelock = TimelockInterface(timelock_);
-        comp = CompInterface(comp_);
-        votingPeriod = votingPeriod_;
-        votingDelay = votingDelay_;
-        proposalThreshold = proposalThreshold_;
+    struct LargePreimageProposalKeys {
+        /// @notice The claimant of the large preimage proposal.
+        address claimant;
+        /// @notice The UUID of the large preimage proposal.
+        uint256 uuid;
     }
 ```
 
-This function initializes the contract. It is a public function with five input parameters: timelock*, comp address*, votingPeriod*, votingDelay*, and proposalThreshold\*. This function is used to initialize the contract during the delegator constructor.
-
-It includes checks to ensure the timelock address is not already set, the caller of the function is the admin address, the timelock* and comp* address are not the null address, the votingPeriod*, votingDelay* and proposalThreshold\* parameters are within the valid range of values defined by their min and max constants.
-
-It then sets the timelock, comp, votingPeriod, votingDelay, and proposalThreshold variables to the values passed in as arguments to the function
-
-### 2.2 propose():
+Explanation
 
 ```bash
-  function propose(address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas, string memory description) public returns (uint) {
-        // Reject proposals before initiating as Governor
-        require(initialProposalId != 0, "GovernorBravo::propose: Governor Bravo not active");
-        // Allow addresses above proposal threshold and whitelisted addresses to propose
-        require(comp.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold || isWhitelisted(msg.sender), "GovernorBravo::propose: proposer votes below proposal threshold");
-        require(targets.length == values.length && targets.length == signatures.length && targets.length == calldatas.length, "GovernorBravo::propose: proposal function information arity mismatch");
-        require(targets.length != 0, "GovernorBravo::propose: must provide actions");
-        require(targets.length <= proposalMaxOperations, "GovernorBravo::propose: too many actions");
+    bytes32[KECCAK_TREE_DEPTH] public zeroHashes;
+```
 
-        uint latestProposalId = latestProposalIds[msg.sender];
-        if (latestProposalId != 0) {
-          ProposalState proposersLatestProposalState = state(latestProposalId);
-          require(proposersLatestProposalState != ProposalState.Active, "GovernorBravo::propose: one live proposal per proposer, found an already active proposal");
-          require(proposersLatestProposalState != ProposalState.Pending, "GovernorBravo::propose: one live proposal per proposer, found an already pending proposal");
+Explanation
+
+```bash
+    LargePreimageProposalKeys[] public proposals;
+```
+
+Explanation
+
+```bash
+    mapping(address => mapping(uint256 => bytes32[KECCAK_TREE_DEPTH])) public proposalBranches;
+```
+
+Explanation
+
+
+```bash
+    mapping(address => mapping(uint256 => LPPMetaData)) public proposalMetadata;
+```
+
+Explanation
+
+
+```bash
+    mapping(address => mapping(uint256 => uint256)) public proposalBonds;
+```
+
+Explanation
+
+```bash
+    mapping(address => mapping(uint256 => bytes32)) public proposalParts;
+```
+
+Explanation
+
+```bash
+    mapping(address => mapping(uint256 => uint64[])) public proposalBlocks;
+```
+
+Explanation
+
+
+The following functions are part of the Preimage Oracle contract and are all carefully and thoroghly intertwined for optimum performance.
+
+The flow: 
+- Constructor 
+- Getter 
+- Private 
+- External
+
+### 2.1 constructor():
+
+```bash
+  constructor(uint256 _minProposalSize, uint256 _challengePeriod) {
+        MIN_LPP_SIZE_BYTES = _minProposalSize;
+        CHALLENGE_PERIOD = _challengePeriod;
+
+        // Compute hashes in empty sparse Merkle tree. The first hash is not set, and kept as zero as the identity.
+        for (uint256 height = 0; height < KECCAK_TREE_DEPTH - 1; height++) {
+            zeroHashes[height + 1] = keccak256(abi.encodePacked(zeroHashes[height], zeroHashes[height]));
         }
-
-        uint startBlock = add256(block.number, votingDelay);
-        uint endBlock = add256(startBlock, votingPeriod);
-
-        proposalCount++;
-        Proposal memory newProposal = Proposal({
-            id: proposalCount,
-            proposer: msg.sender,
-            eta: 0,
-            targets: targets,
-            values: values,
-            signatures: signatures,
-            calldatas: calldatas,
-            startBlock: startBlock,
-            endBlock: endBlock,
-            forVotes: 0,
-            againstVotes: 0,
-            abstainVotes: 0,
-            canceled: false,
-            executed: false
-        });
-
-        proposals[newProposal.id] = newProposal;
-        latestProposalIds[newProposal.proposer] = newProposal.id;
-
-        emit ProposalCreated(newProposal.id, msg.sender, targets, values, signatures, calldatas, startBlock, endBlock, description);
-        return newProposal.id;
     }
 ```
 
-This function creates a new proposal. It is a public function with three input parameters: targets (an array of target addresses), values (an array of Eth values), signatures (an array of function signatures), calldatas (array) and description of the proposal.
+Explanation
 
-It includes checks to ensure the Governor Bravo contract is active, the proposer has enough voting power to create a proposal except if whitelisted, the length of the targets, values, signatures, and calldatas arrays are equal. It also ensures the length of the targets array is not empty and not greater than the maximum number of operations allowed in a proposal.
+### Getter Functions
 
-After it calculates the start and end blocks of the voting period for the new proposal, based on the current block number, the voting delay, and the voting period, the function then checks whether the proposer has an active or pending proposal, creates a new proposal and set the state variable proposalCount to the proposalCount + 1. Then an event is emitted to signal the creation of the new proposal.
-
-#### 2.3 queue():
+### 2.2 proposalCount():
 
 ```bash
-      function queue(uint proposalId) external {
-        require(state(proposalId) == ProposalState.Succeeded, "GovernorBravo::queue: proposal can only be queued if it is succeeded");
-        Proposal storage proposal = proposals[proposalId];
-        uint eta = add256(block.timestamp, timelock.delay());
-        for (uint i = 0; i < proposal.targets.length; i++) {
-            queueOrRevertInternal(proposal.targets[i], proposal.values[i], proposal.signatures[i], proposal.calldatas[i], eta);
-        }
-        proposal.eta = eta;
-        emit ProposalQueued(proposalId, eta);
+   function proposalCount() external view returns (uint256 count_) {
+        count_ = proposals.length;
     }
 ```
 
-This is an external function used to add a proposal to the queue in the Timelock contract. The function takes a single argument, proposalId, which is the ID of the proposal to be queued.
+Explain code
 
-The function checks that the proposal with the specified proposalId is in the Succeeded state, retrieves the proposal from the proposals mapping, calculates the earliest time at which the proposal can be executed, and loops through the targets, values, signatures, and calldatas arrays of the proposal to add each action to the queue in the Timelock contract.
-
-Finally, the eta value is stored in the eta field of the proposal, and a ProposalQueued event is emitted with the proposalId and eta values as arguments.
-
-#### 2.4 queueOrRevertInternal():
+#### 2.3 proposalBlocksLen():
 
 ```bash
-  function queueOrRevertInternal(address target, uint value, string memory signature, bytes memory data, uint eta) internal {
-    require(!timelock.queuedTransactions(keccak256(abi.encode(target, value, signature, data, eta))), "GovernorBravo::queueOrRevertInternal: identical proposal action already queued at eta");
-      timelock.queueTransaction(target, value, signature, data, eta);
-  }
-```
-
-This is an internal function that takes five arguments: target, value, signature, data, and eta. This function is used to add a transaction to the queue in the Timelock contract. The first line of the function checks whether the same transaction has already been queued at the same eta. If the same transaction has already been queued, the function will revert with an error message.
-
-The next line of the function calls the queueTransaction function of the Timelock contract to add the transaction to the queue. Overall, it is a helper function that is used to add transactions to the queue in a safe and efficient manner.
-
-#### 2.5 execute():
-
-```bash
-   function execute(uint proposalId) external payable {
-        require(state(proposalId) == ProposalState.Queued, "GovernorBravo::execute: proposal can only be executed if it is queued");
-        Proposal storage proposal = proposals[proposalId];
-        proposal.executed = true;
-        for (uint i = 0; i < proposal.targets.length; i++) {
-            timelock.executeTransaction.value(proposal.values[i])(proposal.targets[i], proposal.values[i], proposal.signatures[i], proposal.calldatas[i], proposal.eta);
-        }
-        emit ProposalExecuted(proposalId);
+      function proposalBlocksLen(address _claimant, uint256 _uuid) external view returns (uint256 len_) {
+        len_ = proposalBlocks[_claimant][_uuid].length;
     }
 ```
 
-The execute function is a public function that is used to execute a proposal that has been queued in the contract. The function takes a single argument, proposalId, which is the ID of the proposal to be executed. It checks that the proposal with the specified proposalId is in the Queued state.
+Explain code
 
-It retrieves the proposal with the specified proposalId from the proposals mapping, and sets the executed field of the proposal to true. It loops through the targets, values, signatures, and calldatas arrays of the proposal and calls the executeTransaction function in the Timelock contract. Finally, a ProposalExecuted event is emitted with the proposalId as an argument.
-
-#### 2.6 cancel():
+#### 2.4 challengePeriod():
 
 ```bash
-  function cancel(uint proposalId) external {
-        require(state(proposalId) != ProposalState.Executed, "GovernorBravo::cancel: cannot cancel executed proposal");
+  function challengePeriod() external view returns (uint256 challengePeriod_) {
+        challengePeriod_ = CHALLENGE_PERIOD;
+    }
+```
 
-        Proposal storage proposal = proposals[proposalId];
+Explain code
 
-        // Proposer can cancel
-        if(msg.sender != proposal.proposer) {
-            // Whitelisted proposers can't be canceled for falling below proposal threshold
-            if(isWhitelisted(proposal.proposer)) {
-                require((comp.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold) && msg.sender == whitelistGuardian, "GovernorBravo::cancel: whitelisted proposer");
+#### 2.5 minProposalSize():
+
+```bash
+   function minProposalSize() external view returns (uint256 minProposalSize_) {
+        minProposalSize_ = MIN_LPP_SIZE_BYTES;
+    }
+```
+
+Explain code
+
+#### 2.10 getTreeRootLPP();
+
+```bash
+   function getTreeRootLPP(address _owner, uint256 _uuid) public view returns (bytes32 treeRoot_) {
+        uint256 size = proposalMetadata[_owner][_uuid].blocksProcessed();
+        for (uint256 height = 0; height < KECCAK_TREE_DEPTH; height++) {
+            if ((size & 1) == 1) {
+                treeRoot_ = keccak256(abi.encode(proposalBranches[_owner][_uuid][height], treeRoot_));
+            } else {
+                treeRoot_ = keccak256(abi.encode(treeRoot_, zeroHashes[height]));
             }
-            else {
-                require((comp.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold), "GovernorBravo::cancel: proposer above threshold");
+            size >>= 1;
+        }
+    }
+```
+
+Explain code
+
+#### 2.10 \_verify();
+
+```bash
+       function _verify(
+        bytes32[] calldata _proof,
+        bytes32 _root,
+        uint256 _index,
+        bytes32 _leaf
+    )
+        internal
+        pure
+        returns (bool isValid_)
+    {
+        /// @solidity memory-safe-assembly
+        assembly {
+            function hashTwo(a, b) -> hash {
+                mstore(0x00, a)
+                mstore(0x20, b)
+                hash := keccak256(0x00, 0x40)
             }
-        }
 
-        proposal.canceled = true;
-        for (uint i = 0; i < proposal.targets.length; i++) {
-            timelock.cancelTransaction(proposal.targets[i], proposal.values[i], proposal.signatures[i], proposal.calldatas[i], proposal.eta);
-        }
+            let value := _leaf
+            for { let i := 0x00 } lt(i, KECCAK_TREE_DEPTH) { i := add(i, 0x01) } {
+                let branchValue := calldataload(add(_proof.offset, shl(0x05, i)))
 
-        emit ProposalCanceled(proposalId);
-    }
-```
+                switch and(shr(i, _index), 0x01)
+                case 1 { value := hashTwo(branchValue, value) }
+                default { value := hashTwo(value, branchValue) }
+            }
 
-This is an external function that is used to cancel a proposal that has not yet been executed. The function takes a single argument, proposalId, which is the ID of the proposal to be canceled. It checks that the proposal with the specified proposalId is not in the Executed state. It then checks that the sender of the transaction is either the proposer of the proposal, or the proposer is whitelisted and the sender is the whitelistGuardian. If the sender is the proposer, the function checks that the proposer has fallen below the proposal threshold. If the sender is the whitelistGuardian, the function checks that the proposer has fallen below the proposal threshold and the proposer is whitelisted.
-
-If the checks pass, the function sets the canceled field of the proposal to true, and calls the cancelTransaction function of the Timelock contract to cancel each action in the proposal. Finally, the function emits a ProposalCanceled event with the proposalId value as an argument. Overall, the cancel function plays a critical role in the decentralized governance of the Compound protocol by allowing token holders to cancel proposals that are no longer desirable or feasible.
-
-##### 2.7 getActions():
-
-```bash
-    function getActions(uint proposalId) external view returns (address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas) {
-        Proposal storage p = proposals[proposalId];
-        return (p.targets, p.values, p.signatures, p.calldatas);
-    }
-```
-
-This is a public function that is used to retrieve the targets, values, signatures, and calldatas of a proposal. The function takes a single argument, proposalId, which is the ID of the proposal to be retrieved. It retrieves the proposal with the specified proposalId from the proposals mapping, and returns the targets, values, signatures, and calldatas of the proposal.
-
-##### 2.8 getReceipt():
-
-```bash
-     function getReceipt(uint proposalId, address voter) external view returns (Receipt memory) {
-        return proposals[proposalId].receipts[voter];
-    }
-```
-
-This is a public function that is used to retrieve the receipt of a proposal. The function takes two arguments, proposalId and voter, which are the ID of the proposal and the address of the voter. It retrieves the proposal with the specified proposalId from the proposals mapping, and returns the receipt of the proposal for the specified voter.
-
-##### 2.9 state():
-
-```bash
-     function state(uint proposalId) public view returns (ProposalState) {
-        require(proposalCount >= proposalId && proposalId > initialProposalId, "GovernorBravo::state: invalid proposal id");
-        Proposal storage proposal = proposals[proposalId];
-        if (proposal.canceled) {
-            return ProposalState.Canceled;
-        } else if (block.number <= proposal.startBlock) {
-            return ProposalState.Pending;
-        } else if (block.number <= proposal.endBlock) {
-            return ProposalState.Active;
-        } else if (proposal.forVotes <= proposal.againstVotes || proposal.forVotes < quorumVotes) {
-            return ProposalState.Defeated;
-        } else if (proposal.eta == 0) {
-            return ProposalState.Succeeded;
-        } else if (proposal.executed) {
-            return ProposalState.Executed;
-        } else if (block.timestamp >= add256(proposal.eta, timelock.GRACE_PERIOD())) {
-            return ProposalState.Expired;
-        } else {
-            return ProposalState.Queued;
+            isValid_ := eq(value, _root)
         }
     }
 ```
 
-This is a public view function that is used to retrieve the current state of a proposal. The function takes a single argument, proposalId, which is the ID of the proposal to retrieve. It checks that the proposalId is valid by ensuring that it is greater than the initialProposalId and less than or equal to the proposalCount. It then retrieves the proposal with the specified proposalId from the proposals mapping.
+Explain code
 
-If the canceled field of the proposal is true, the function returns the Canceled state. If the block number is less than or equal to the startBlock of the proposal, the function returns the Pending state. If the block number is less than or equal to the endBlock of the proposal, the function returns the Active state. If the number of votes in favor of the proposal is less than or equal to the number of votes against the proposal, or the number of votes in favor of the proposal is less than the quorumVotes threshold, the function returns ProposalState.Defeated. If the eta field of the proposal is 0, the function returns Succeeded state. If the executed field of the proposal is true, the function returns the Executed state. If the block timestamp is greater than or equal to the eta plus the GRACE_PERIOD of the Timelock contract, the function returns the Expired state.
 
-Otherwise, the function returns the Queued state.
-
-#### 2.10 castVote();
+#### 2.15 \_payoutBond();
 
 ```bash
-   function castVote(uint proposalId, uint8 support) external {
-        emit VoteCast(msg.sender, proposalId, support, castVoteInternal(msg.sender, proposalId, support), "");
+ function _payoutBond(address _claimant, uint256 _uuid, address _to) internal {
+        // Pay out the bond to the claimant.
+        uint256 bond = proposalBonds[_claimant][_uuid];
+        proposalBonds[_claimant][_uuid] = 0;
+        (bool success,) = _to.call{ value: bond }("");
+        if (!success) revert BondTransferFailed();
     }
 ```
 
-This is an external function that is used to cast a vote on a proposal. The function takes two arguments, proposalId and support, which are the ID of the proposal and support, which is a uint indicating whether the voter opposes (0), supports(1) or abstains(2) the proposal. The function then emits a VoteCast event with the following parameters - msg.sender (the address of the voter who cast the vote), proposalId, support, castVoteInternal(msg.sender, proposalId, support), and "" (an empty string).
+The \_payBond function
 
-The castVoteInternal function is called with the same arguments as the castVote function, and is responsible for actually casting the vote. The castVote function simply emits the VoteCast event and returns the result of the castVoteInternal function. Overall, the castVote function is a critical part of the Compound governance system, as it allows token holders to cast votes on proposals and participate in the decentralized decision-making process.
-
-##### 2.11 castVoteWithReason():
+#### 2.16 \_hashLeaf();
 
 ```bash
-    function castVoteWithReason(uint proposalId, uint8 support, string calldata reason) external {
-        emit VoteCast(msg.sender, proposalId, support, castVoteInternal(msg.sender, proposalId, support), reason);
+    function _hashLeaf(Leaf memory _leaf) internal pure returns (bytes32 leaf_) {
+        leaf_ = keccak256(abi.encodePacked(_leaf.input, _leaf.index, _leaf.stateCommitment));
     }
 ```
 
-This is an external function that is used to cast a vote on a proposal with a reason. . The function takes three arguments: proposalId, which is the ID of the proposal to vote on, support, which is a uint indicating whether the voter opposes (0), supports(1) or abstains(2) the proposal, and reason, which is a string that provides a reason for the voter's vote. The function then emits a VoteCast event with the following parameters - msg.sender (the address of the voter who cast the vote), proposalId, support, castVoteInternal(msg.sender, proposalId, support), and reason.
+Explain \_privateFunction 
 
-The castVoteInternal function is called with the same arguments as the castVoteWithReason function, and is responsible for actually casting the vote. The castVoteWithReason function simply emits the VoteCast event with the additional reason parameter and returns the result of the castVoteInternal function. The castVoteWithReason function can be useful for providing additional context and transparency around the decision-making process in the Compound governance system.
 
-##### 2.12 castVoteBySig():
+
+#### 2.16 \_hashLeaf();
 
 ```bash
-    function castVoteBySig(uint proposalId, uint8 support, uint8 v, bytes32 r, bytes32 s) external {
-      bytes32 domainSeparator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(byte(name)), getChainIdInternal(), address(this)));
-      bytes32 structHash = keccak256(abi.encode(BALLOT_TYPEHASH, proposalId, support));
-      bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator,structHash));
-      address signatory = ecrecover(digest, v, r, s);
-      require(signatory != address(0), "GovernorBravo::castVoteBySig: invalid signature");
-      emit VoteCast(signatory, proposalId, support, castVoteInternal(signatory, proposalId, support), "");
+    function _hashLeaf(Leaf memory _leaf) internal pure returns (bytes32 leaf_) {
+        leaf_ = keccak256(abi.encodePacked(_leaf.input, _leaf.index, _leaf.stateCommitment));
     }
 ```
 
-This is an external function that is used to cast a vote on a proposal using a signature. The function takes five arguments: proposalId, which is the ID of the proposal to vote on, support, which is a uint indicating whether the voter opposes (0), supports(1) or abstains(2) the proposal, v, r, and s, which are the components of the signature.
+### External Functions
 
-The function first calculates the domainSeparator by hashing together the DOMAIN_TYPEHASH, the hash of the name of the contract, the getChainIdInternal function, and the address of the contract. It then calculates the structHash by hashing together the BALLOT_TYPEHASH, the proposalId, and the support value.
-
-It then calculates the digest by hashing together the prefix "\x19\x01", the domainSeparator, and the structHash, and recovers the address of the signer using the ecrecover function with digest and the v, r, and s components of the signature.
-
-If the recovered signatory address is not zero, the function emits a VoteCast event with the following parameters - signatory (the address of the voter who cast the vote), proposalId, support, castVoteInternal(signatory,proposalId, support), and "" (an empty string). Overall, the castVoteBySig function is a helper function that is used to cast a vote on a proposal using a signature. This can be useful for allowing users to cast votes without having to interact directly with the contract, and can help to improve the usability and accessibility of the Compound governance system.
-
-#### 2.13 castVoteInternal();
-
+#### 2.16 readPreimage();
 ```bash
-      function castVoteInternal(address voter, uint proposalId, uint8 support) internal returns (uint96) {
-        require(state(proposalId) == ProposalState.Active, "GovernorBravo::castVoteInternal: voting is closed");
-        require(support <= 2, "GovernorBravo::castVoteInternal: invalid vote type");
-        Proposal storage proposal = proposals[proposalId];
-        Receipt storage receipt = proposal.receipts[voter];
-        require(receipt.hasVoted == false, "GovernorBravo::castVoteInternal: voter already voted");
-        uint96 votes = comp.getPriorVotes(voter, proposal.startBlock);
+function readPreimage(bytes32 _key, uint256 _offset) external view returns (bytes32 dat_, uint256 datLen_) {
+        require(preimagePartOk[_key][_offset], "pre-image must exist");
 
-        if (support == 0) {
-            proposal.againstVotes = add256(proposal.againstVotes, votes);
-        } else if (support == 1) {
-            proposal.forVotes = add256(proposal.forVotes, votes);
-        } else if (support == 2) {
-            proposal.abstainVotes = add256(proposal.abstainVotes, votes);
+        // Calculate the length of the pre-image data
+        // Add 8 for the length-prefix part
+        datLen_ = 32;
+        uint256 length = preimageLengths[_key];
+        if (_offset + 32 >= length + 8) {
+            datLen_ = length + 8 - _offset;
         }
 
-        receipt.hasVoted = true;
-        receipt.support = support;
-        receipt.votes = votes;
+        // Retrieve the pre-image data
+        dat_ = preimageParts[_key][_offset];
+    }
+```
+explanation
 
-        return votes;
+
+#### 2.16 loadLocalData();
+```bash
+ function loadLocalData(
+        uint256 _ident,
+        bytes32 _localContext,
+        bytes32 _word,
+        uint256 _size,
+        uint256 _partOffset
+    )
+        external
+        returns (bytes32 key_)
+    {
+        // Compute the localized key from the given local identifier.
+        key_ = PreimageKeyLib.localizeIdent(_ident, _localContext);
+
+        // Revert if the given part offset is not within bounds.
+        if (_partOffset > _size + 8 || _size > 32) {
+            revert PartOffsetOOB();
+        }
+
+        // Prepare the local data part at the given offset
+        bytes32 part;
+        assembly {
+            // Clean the memory in [0x20, 0x40)
+            mstore(0x20, 0x00)
+
+            // Store the full local data in scratch space.
+            mstore(0x00, shl(192, _size))
+            mstore(0x08, _word)
+
+            // Prepare the local data part at the requested offset.
+            part := mload(_partOffset)
+        }
+
+        // Store the first part with `_partOffset`.
+        preimagePartOk[key_][_partOffset] = true;
+        preimageParts[key_][_partOffset] = part;
+        // Assign the length of the preimage at the localized key.
+        preimageLengths[key_] = _size;
+    }
+
+```
+
+#### 2.16 loadKeccak256PreimagePart();
+```bash
+ function loadKeccak256PreimagePart(uint256 _partOffset, bytes calldata _preimage) external {
+        uint256 size;
+        bytes32 key;
+        bytes32 part;
+        assembly {
+            // len(sig) + len(partOffset) + len(preimage offset) = 4 + 32 + 32 = 0x44
+            size := calldataload(0x44)
+
+            // revert if part offset >= size+8 (i.e. parts must be within bounds)
+            if iszero(lt(_partOffset, add(size, 8))) {
+                // Store "PartOffsetOOB()"
+                mstore(0x00, 0xfe254987)
+                // Revert with "PartOffsetOOB()"
+                revert(0x1c, 0x04)
+            }
+            // we leave solidity slots 0x40 and 0x60 untouched, and everything after as scratch-memory.
+            let ptr := 0x80
+            // put size as big-endian uint64 at start of pre-image
+            mstore(ptr, shl(192, size))
+            ptr := add(ptr, 0x08)
+            // copy preimage payload into memory so we can hash and read it.
+            calldatacopy(ptr, _preimage.offset, size)
+            // Note that it includes the 8-byte big-endian uint64 length prefix.
+            // this will be zero-padded at the end, since memory at end is clean.
+            part := mload(add(sub(ptr, 0x08), _partOffset))
+            let h := keccak256(ptr, size) // compute preimage keccak256 hash
+            // mask out prefix byte, replace with type 2 byte
+            key := or(and(h, not(shl(248, 0xFF))), shl(248, 0x02))
+        }
+        preimagePartOk[key][_partOffset] = true;
+        preimageParts[key][_partOffset] = part;
+        preimageLengths[key] = size;
     }
 ```
 
-This is an internal function that is used to cast a vote on a proposal. The function takes three arguments: voter, which is the address of the voter who is casting the vote, proposalId, which is the ID of the proposal to vote on, and support, which is a uint indicating whether the voter opposes (0), supports(1) or abstains(2) the proposal. The function first checks that the proposal is in the Active state, meaning that voting is currently open for the proposal. It then checks that the support value is valid (i.e. 0, 1, or 2).
 
-The function retrieves the Proposal struct for the specified proposalId from the proposals mapping, and then retrieves the Receipt struct for the specified voter from the receipts mapping of the proposal. The function then checks that the voter has not already voted on the proposal. It then calculates the votes that the voter has cast by calling the getPriorVotes function with the voter and proposal.startBlock as arguments.
 
-If the support value is 0, the function adds the votes to the proposal.againstVotes value. If the support value is 1, the function adds the votes to the proposal.forVotes value. If the support value is 2, the function adds the votes to the proposal.abstainVotes value. The function then sets the receipt.hasVoted value to true, and the receipt.support value to the support value. The receipt.votes value is set to the votes value. Finally, function returns the votes value.
-
-#### 2.14 isWhitelisted();
-
+#### 2.16 loadBlobPreimagePart();
 ```bash
-   function isWhitelisted(address account) public view returns (bool) {
-        return (whitelistAccountExpirations[account] > now);
+ function loadBlobPreimagePart(
+        uint256 _z,
+        uint256 _y,
+        bytes calldata _commitment,
+        bytes calldata _proof,
+        uint256 _partOffset
+    )
+        external
+    {
+        bytes32 key;
+        bytes32 part;
+        assembly {
+            // Compute the versioned hash. The SHA2 hash of the 48 byte commitment is masked with the version byte,
+            // which is currently 1. https://eips.ethereum.org/EIPS/eip-4844#parameters
+            // SAFETY: We're only reading 48 bytes from `_commitment` into scratch space, so we're not reading into the
+            //         free memory ptr region. Since the exact number of btyes that is copied into scratch space is
+            //         the same size as the hash input, there's no concern of dirty memory being read into the hash
+            //         input.
+            calldatacopy(0x00, _commitment.offset, 0x30)
+            let success := staticcall(gas(), 0x02, 0x00, 0x30, 0x00, 0x20)
+            if iszero(success) {
+                // Store the "ShaFailed()" error selector.
+                mstore(0x00, 0xf9112969)
+                // revert with "ShaFailed()"
+                revert(0x1C, 0x04)
+            }
+            // Set the `VERSIONED_HASH_VERSION_KZG` byte = 1 in the high-order byte of the hash.
+            let versionedHash := or(and(mload(0x00), not(shl(248, 0xFF))), shl(248, 0x01))
+
+            // we leave solidity slots 0x40 and 0x60 untouched, and everything after as scratch-memory.
+            let ptr := 0x80
+
+            // Load the inputs for the point evaluation precompile into memory. The inputs to the point evaluation
+            // precompile are packed, and not supposed to be ABI-encoded.
+            mstore(ptr, versionedHash)
+            mstore(add(ptr, 0x20), _z)
+            mstore(add(ptr, 0x40), _y)
+            calldatacopy(add(ptr, 0x60), _commitment.offset, 0x30)
+            calldatacopy(add(ptr, 0x90), _proof.offset, 0x30)
+
+            // Verify the KZG proof by calling the point evaluation precompile. If the proof is invalid, the precompile
+            // will revert.
+            success :=
+                staticcall(
+                    gas(), // forward all gas
+                    0x0A, // point evaluation precompile address
+                    ptr, // input ptr
+                    0xC0, // input size = 192 bytes
+                    0x00, // output ptr
+                    0x00 // output size
+                )
+            if iszero(success) {
+                // Store the "InvalidProof()" error selector.
+                mstore(0x00, 0x09bde339)
+                // revert with "InvalidProof()"
+                revert(0x1C, 0x04)
+            }
+
+            // revert if part offset >= 32+8 (i.e. parts must be within bounds)
+            if iszero(lt(_partOffset, 0x28)) {
+                // Store "PartOffsetOOB()"
+                mstore(0x00, 0xfe254987)
+                // Revert with "PartOffsetOOB()"
+                revert(0x1C, 0x04)
+            }
+            // Clean the word at `ptr + 0x28` to ensure that data out of bounds of the preimage is zero, if the part
+            // offset requires a partial read.
+            mstore(add(ptr, 0x28), 0x00)
+            // put size (32) as a big-endian uint64 at start of pre-image
+            mstore(ptr, shl(192, 0x20))
+            // copy preimage payload into memory so we can hash and read it.
+            mstore(add(ptr, 0x08), _y)
+            // Note that it includes the 8-byte big-endian uint64 length prefix. This will be zero-padded at the end,
+            // since memory at end is guaranteed to be clean.
+            part := mload(add(ptr, _partOffset))
+
+            // Compute the key: `keccak256(commitment ++ z)`. Since the exact number of btyes that is copied into
+            // scratch space is the same size as the hash input, there's no concern of dirty memory being read into
+            // the hash input.
+            calldatacopy(ptr, _commitment.offset, 0x30)
+            mstore(add(ptr, 0x30), _z)
+            let h := keccak256(ptr, 0x50)
+            // mask out prefix byte, replace with type 5 byte
+            key := or(and(h, not(shl(248, 0xFF))), shl(248, 0x05))
+        }
+        preimagePartOk[key][_partOffset] = true;
+        preimageParts[key][_partOffset] = part;
+        preimageLengths[key] = 32;
     }
 ```
 
-The isWhitelisted function is a public view function that checks whether an account is currently whitelisted. The function takes one argument: account, which is the address of the account to check.
-
-The function returns a boolean value indicating whether the account is currently whitelisted. It does this by checking whether the value stored in the whitelistAccountExpirations mapping for the specified account is greater than the current time (now). If the value is greater than now, then the account is considered to be whitelisted and the function returns true. Otherwise, the account is considered to be not whitelisted and the function returns false.
-
-Overall, the isWhitelisted function is a helper function that is used to check whether an account is currently whitelisted. This can be useful for enforcing access control and ensuring that only authorized accounts are able to perform certain actions in the system.
-
-#### 2.15 \_setVotingDelay();
-
+#### 2.16 loadKeccak256PreimagePart();
 ```bash
-  function _setVotingDelay(uint newVotingDelay) external {
-        require(msg.sender == admin, "GovernorBravo::_setVotingDelay: admin only");
-        require(newVotingDelay >= MIN_VOTING_DELAY && newVotingDelay <= MAX_VOTING_DELAY, "GovernorBravo::_setVotingDelay: invalid voting delay");
-        uint oldVotingDelay = votingDelay;
-        votingDelay = newVotingDelay;
+  function loadPrecompilePreimagePart(uint256 _partOffset, address _precompile, bytes calldata _input) external {
+        bytes32 res;
+        bytes32 key;
+        bytes32 part;
+        uint256 size;
+        assembly {
+            // we leave solidity slots 0x40 and 0x60 untouched, and everything after as scratch-memory.
+            let ptr := 0x80
 
-        emit VotingDelaySet(oldVotingDelay,votingDelay);
+            // copy precompile address and input into memory
+            // len(sig) + len(_partOffset) + address-offset-in-slot
+            calldatacopy(ptr, 48, 20)
+            calldatacopy(add(20, ptr), _input.offset, _input.length)
+            // compute the hash
+            let h := keccak256(ptr, add(20, _input.length))
+            // mask out prefix byte, replace with type 6 byte
+            key := or(and(h, not(shl(248, 0xFF))), shl(248, 0x06))
+
+            // Call the precompile to get the result.
+            res :=
+                staticcall(
+                    gas(), // forward all gas
+                    _precompile,
+                    add(20, ptr), // input ptr
+                    _input.length,
+                    0x0, // Unused as we don't copy anything
+                    0x00 // don't copy anything
+                )
+
+            size := add(1, returndatasize())
+            // revert if part offset >= size+8 (i.e. parts must be within bounds)
+            if iszero(lt(_partOffset, add(size, 8))) {
+                // Store "PartOffsetOOB()"
+                mstore(0, 0xfe254987)
+                // Revert with "PartOffsetOOB()"
+                revert(0x1c, 4)
+            }
+
+            // Reuse the `ptr` to store the preimage part: <sizePrefix ++ precompileStatus ++ returrnData>
+            // put size as big-endian uint64 at start of pre-image
+            mstore(ptr, shl(192, size))
+            ptr := add(ptr, 0x08)
+
+            // write precompile result status to the first byte of `ptr`
+            mstore8(ptr, res)
+            // write precompile return data to the rest of `ptr`
+            returndatacopy(add(ptr, 0x01), 0x0, returndatasize())
+
+            // compute part given ofset
+            part := mload(add(sub(ptr, 0x08), _partOffset))
+        }
+        preimagePartOk[key][_partOffset] = true;
+        preimageParts[key][_partOffset] = part;
+        preimageLengths[key] = size;
     }
+
 ```
-
-The \_setVotingDelay function is used to set the voting delay for proposals, and takes in one argument: newVotingDelay. It requires the caller to be the admin address and the new voting delay to be within a valid range. It updates the votingDelay variable and emits a VotingDelaySet event with the old and new voting delay values.
-
-#### 2.16 \_setVotingPeriod();
-
-```bash
-      function _setVotingPeriod(uint newVotingPeriod) external {
-        require(msg.sender == admin, "GovernorBravo::_setVotingPeriod: admin only");
-        require(newVotingPeriod >= MIN_VOTING_PERIOD && newVotingPeriod <= MAX_VOTING_PERIOD, "GovernorBravo::_setVotingPeriod: invalid voting period");
-        uint oldVotingPeriod = votingPeriod;
-        votingPeriod = newVotingPeriod;
-
-        emit VotingPeriodSet(oldVotingPeriod, votingPeriod);
-    }
-```
-
-The \_setVotingPeriod function is used to set the voting period for proposals, and takes in one argument: newVotingPeriod. It requires the caller to be the admin address and the new voting period to be within a valid range. It updates the votingPeriod variable and emits a VotingPeriodSet event with the old and new voting period values.
-
-#### 2.17 \_setProposalThreshold();
-
-```bash
-  function _setProposalThreshold(uint newProposalThreshold) external {
-        require(msg.sender == admin, "GovernorBravo::_setProposalThreshold: admin only");
-        require(newProposalThreshold >= MIN_PROPOSAL_THRESHOLD && newProposalThreshold <= MAX_PROPOSAL_THRESHOLD, "GovernorBravo::_setProposalThreshold: invalid proposal threshold");
-        uint oldProposalThreshold = proposalThreshold;
-        proposalThreshold = newProposalThreshold;
-
-        emit ProposalThresholdSet(oldProposalThreshold, proposalThreshold);
-    }
-```
-
-The \_setProposalThreshold function is used to set the proposal threshold for proposals, and takes in one argument: newProposalThreshold. It requires the caller to be the admin address and the new proposal threshold to be within a valid range. It updates the proposalThreshold variable and emits a ProposalThresholdSet event with the old and new proposal threshold values.
-
-#### 2.18 \_setWhitelistAccountExpiration();
-
-```bash
-      function _setWhitelistAccountExpiration(address account, uint expiration) external {
-        require(msg.sender == admin || msg.sender == whitelistGuardian, "GovernorBravo::_setWhitelistAccountExpiration: admin only");
-        whitelistAccountExpirations[account] = expiration;
-
-        emit WhitelistAccountExpirationSet(account, expiration);
-    }
-```
-
-The \_setWhitelistAccountExpiration function is used to set the expiration for a whitelisted account, and takes in two arguments: account and expiration. It requires the caller to be the admin address or the whitelistGuardian address. It updates the value stored in the whitelistAccountExpirations mapping for the specified account to the specified expiration value and emits a WhitelistAccountExpirationSet event with the account and expiration values.
-
-#### 2.19 \_setWhitelistGuardian();
-
-```bash
-     function _setWhitelistGuardian(address account) external {
-        require(msg.sender == admin, "GovernorBravo::_setWhitelistGuardian: admin only");
-        address oldGuardian = whitelistGuardian;
-        whitelistGuardian = account;
-
-        emit WhitelistGuardianSet(oldGuardian, whitelistGuardian);
-     }
-```
-
-The \_setWhitelistGuardian function is used to set the whitelist guardian address, and takes in one argument: account. It requires the caller to be the admin address. It updates the value of the whitelistGuardian variable and emits a WhitelistGuardianSet event with the old and new whitelist guardian values.
-
-#### 2.20 \_initiate();
-
-```bash
-      function _initiate(address governorAlpha) external {
-        require(msg.sender == admin, "GovernorBravo::_initiate: admin only");
-        require(initialProposalId == 0, "GovernorBravo::_initiate: can only initiate once");
-        proposalCount = GovernorAlpha(governorAlpha).proposalCount();
-        initialProposalId = proposalCount;
-        timelock.acceptAdmin();
-    }
-```
-
-The \_initiate function is used to initiate the GovernorBravo contract, and takes in one argument: governorAlpha. It requires the caller to be the admin address, and ensures the initialProposalId variable is set to 0, which indicates that the contract has not yet been initiated. It then calls the acceptAdmin function on the timelock contract to accept the admin role. It then updates the proposalCount variable to the current proposal count of the governorAlpha contract and the initialProposalId variable to the current proposal count.
-
-The function then sets the proposalCount value to the proposalCount value of the governorAlpha contract and sets the initialProposalId value to the proposalCount value. Finally, the function calls the acceptAdmin function of the timelock contract.
-
-#### 2.21 \_setPendingAdmin();
-
-```bash
-      function _setPendingAdmin(address newPendingAdmin) external {
-        require(msg.sender == admin, "GovernorBravo:_setPendingAdmin: admin only");
-
-        address oldPendingAdmin = pendingAdmin;
-
-        pendingAdmin = newPendingAdmin;
-
-        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);
-    }
-```
-
-The \_setPendingAdmin function is used to set the pending admin address, and takes in one argument: newPendingAdmin. It requires the caller to be the admin address, saves the current value of the pendingAdmin variable in the oldPendingAdmin variable for inclusion in the log and updates the pendingAdmin variable to the newPendingAdmin value. It then emits a NewPendingAdmin event with the old and new pending admin values. This can be useful for transferring the admin role to a new address, which can help to ensure the ongoing maintenance and security of the contract.
-
-#### 2.22 \_acceptPendingAdmin();
-
-```bash
-    function _acceptAdmin() external {
-        require(msg.sender == pendingAdmin && msg.sender != address(0), "GovernorBravo:_acceptAdmin: pending admin only");
-
-        address oldAdmin = admin;
-        address oldPendingAdmin = pendingAdmin;
-
-        admin = pendingAdmin;
-
-        pendingAdmin = address(0);
-
-        emit NewAdmin(oldAdmin, admin);
-        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);
-    }
-```
-
-The \_acceptPendingAdmin function is used to accept the pending admin address, and takes no arguments. It ensures the caller is the pending admin address and is not the zero address. It saves the current value of the admin and pendingAdmin variables in the oldAdmin and oldPendingAdmin variables for inclusion in the log, and updates the admin and pendingAdmin variables to the pendingAdmin value. It clears the pendingAdmin variable, and then emits a NewAdmin and NewPendingAdmin event with the old and new admin and pending admin values.
-
-#### 2.23 add256();
-
-```bash
-    function add256(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "GovernorBravo::add256: addition overflow");
-        return c;
-    }
-```
-
-The add256 function takes two uint256 arguments (a and b) and returns their sum as a uint. It first adds the two arguments together and stores the result in a new variable c. It then checks that the result is greater than or equal to the original value of a, and reverts with an error message if it is not. Finally, it returns the sum c.
-
-#### 2.24 sub256();
-
-```bash
-    function sub256(uint256 a, uint256 b) internal pure returns (uint) {
-    require(b <= a, "subtraction underflow");
-    return a - b;
-    }
-```
-
-The sub256 function takes two uint256 arguments (a and b) and returns their difference as a uint. It first checks that b is less than or equal to a, and reverts with an error message if it is not. It then subtracts the b from the first and returns the result.
-
-#### 2.24 getChainIdInternal();
-
-```bash
-    function getChainIdInternal() internal pure returns (uint) {
-        uint chainId;
-        assembly { chainId := chainid() }
-        return chainId;
-    }
-```
-
-The getChainIdInternal function returns the current chain ID as a uint. It does this by using inline assembly to call the chainid() opcode, which returns the current chain ID.
 
 ## <h2 id="findings">3.0 FINDINGS </h2>
 
@@ -674,10 +643,4 @@ Consider using the SafeMath library to ensure safe arithmetic operations to prev
 
 ## <h2 id="conclusion">4.0 CONCLUSION </h2>
 
-In this audit, I have thoroughly examined the "GovernorBravoDelegate" Solidity smart contract, focusing on its design and implementation. "GovernorBravoDelegate" is a critical component for decentralized governance within a blockchain-based application. It facilitates proposal creation, voting, execution, and administrative actions, essential for effective decentralized decision-making.
-
-The code is well-organized, following established best practices in Solidity development. It demonstrates a robust approach to decentralized governance and aligns with the principles of secure and efficient smart contract programming. The contract incorporates necessary validation checks to ensure the integrity and security of the governance processes.
-
-However, considering the evolving nature of blockchain technology and smart contract security, continued testing, auditing, and potential updates are recommended to maintain and enhance the contract's reliability and functionality.
-
-Overall, the "GovernorBravoDelegate" contract presents a solid foundation for decentralized governance, contributing positively to the broader blockchain ecosystem. The identified suggestions can be valuable for refining the contract and informing future implementations in a more efficient and maintainable manner.
+My Conclusion here
