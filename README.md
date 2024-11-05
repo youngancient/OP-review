@@ -1,8 +1,8 @@
 | Client         | Compound Protocol Governance                    |
 | :------------- | :---------------------------------------------- |
 | Title          | Smart Contract Audit Report                     |
-| Target         | PreimageOracle.sol                         |
-| Version         | 1.0.0                        |
+| Target         | PreimageOracle.sol                              |
+| Version        | 1.0.0                                           |
 | Author         | [YoungAncient](https://github.com/youngancient) |
 | Classification | Public                                          |
 | Date Created   | November 3, 2024                                |
@@ -52,100 +52,126 @@ Solidity, Diamond Standard, Foundry, Hardhat, Wagmi, Ethers.js, React, Next js, 
 [![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://youngancient.vercel.app/)
 [![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/YoungAncient)
 
-### <h3 id="Cpg">1.5 <Contract_Concept_Name><h3>
+### <h3 id="Cpg">1.5 Optimism PreImageOracle<h3>
 
 Explain context
 
-
 ### <h3 id="Gbd">1.6 PreImageOracle<h3>
 
-The PreImageOracle contract is an implementation ...
+Naturally, PreImageOracle by definition is a type of cryptographic oracle that, given a cryptographic hash, can reveal the preimage (original input) that produced the hash.
+
+This PreImageOracle Contract is designed to manage and verify large preimages (essentially, data pieces or proposals) in a secure, verifiable way using Merkle trees.
+
+This contract is an integral part of `Optimism Fault Dispute Game`. The `Fault Dispute Game` is a contract that allows anyone to post an ETH bond along with a claim about an output root that represents the state of L2.
 
 ### <h3 id="scope">1.7 Scope <h3>
 
-_(**Table: 1.7**: Compound GovernorBravoDelegate G2 Audit Scope)_
+_(**Table: 1.7**: PreImageOracle Audit Scope)_
 | Files in scope | SLOC |
 | :-------- | :------- |
 | Contracts: 1 | |
 | `PreimageOracle.sol` | `800` |
 | | |
 | Imports: 7 | |
-| `IPreimageOracle.sol` | `x` |
-| `ISemver.sol` | `x` |
-| `PreimageKeyLib.sol` | `x` |
+| `IPreimageOracle.sol` | `80` |
+| `ISemver.sol` | `13` |
+| `PreimageKeyLib.sol` | `59` |
 | `LibKeccak.sol` | `x` |
-| `CannonErrors.sol` | `x` |
-| `CannonTypes.sol` | `x` |
-
-
+| `CannonErrors.sol` | `47` |
+| `CannonTypes.sol` | `95` |
 
 ### <h3 id="overview"> 1.9 System Overview <h3>
 
-- #### GovernorBravoDelegateStorageV2.sol
+On a high level perspective, the contract these 4 things:
 
-  This contract is designed for decentralized governance using a voting system, allowing users to propose, vote on, and execute actions. It also includes functionality for whitelisting and administration. It implements safety checks and ensures proper governance mechanisms are in place to manage proposals and voting.
+- #### Proposal Management
 
+  Users (possibly proposers or claimants) submit parts of large preimages in pieces, which are then stored securely and tied to a unique identifier (UUID). These preimages are validated with Merkle tree branches.
+
+- #### Merkle Tree Verification
+
+  A Merkle tree structure is used to validate that a specific part belongs to the larger set without needing the whole data. This is highly efficient and provides cryptographic proof.
+
+- #### Bonded Proposals
+
+  Each proposal appears to have a "bond" (some stake or deposit) associated with it. This bond act as an incentive, possibly rewarding successful proposals and penalizing incomplete or invalid ones.
+
+- #### Data Integrity
+
+  By using Merkle roots and proofs, the contract ensures that only complete, valid data sets can finalize and be paid out. It does so by enforcing that all preimage parts are correctly aligned in the Merkle structure.
 
 ## <h2 id="review"> 2.0 CONTRACT REVIEW <h2>
 
+The contract inherits from two base contracts; IPreimageOracle and ISemver.
+
+`IPreimageOracle` is the interface of the contract, it defines all the functions which makes up the PrreimageOracle contract.
+
+`ISemver` is the interface that ensures the contract is versioned using semantic versioning. It contains a getter method used by offchain tooling.
+
+```bash
+    contract PreimageOracle is IPreimageOracle, ISemver
+```
+
 The contract contains the following state constant and immutable variables:
+
+This is the duration of the large preimage proposal challenge period.
 
 ```bash
     uint256 internal immutable CHALLENGE_PERIOD;
 ```
 
-Explanation
+This is the minimum size of a preimage that can be proposed in the large preimage path.
 
 ```bash
     uint256 internal immutable MIN_LPP_SIZE_BYTES;
 ```
 
-Explanation
-
+This is the minimum bond size for large preimage proposals.
 
 ```bash
     uint256 public constant MIN_BOND_SIZE = 0.25 ether;
 ```
 
-Explanation
+This defines the depth of the keccak256 merkle tree. Supports up to 65,536 keccak blocks, or ~8.91MB preimages.
 
 ```bash
     uint256 public constant KECCAK_TREE_DEPTH = 16;
 ```
 
-Explanation
+This is the maximum number of keccak blocks that can fit into the merkle tree.
 
 ```bash
     uint256 public constant MAX_LEAF_COUNT = 2 ** KECCAK_TREE_DEPTH - 1;
 ```
 
-Explanation
+This defines the semantic version of the Preimage Oracle contract.
 
 ```bash
     string public constant version = "1.0.0";
 ```
 
-Explanation
-
 The contract contains the following state variables (mappings and struct):
+
+`preimageLengths` is a mapping of pre-image keys to pre-image lengths.
 
 ```bash
     mapping(bytes32 => uint256) public preimageLengths;
 ```
 
-Explanation
+`preimageParts` is a mapping of pre-image keys to pre-image offsets to pre-image parts.
 
 ```bash
     mapping(bytes32 => mapping(uint256 => bytes32)) public preimageParts;
 ```
 
-Explanation
+`preimagePartOk` is a mapping of pre-image keys to pre-image part offsets to preimage preparedness.
 
 ```bash
     mapping(bytes32 => mapping(uint256 => bool)) public preimagePartOk;
 ```
 
-Explanation
+
+`LargePreimageProposalKeys` is a struct to Unpacked keys for large preimage proposals.
 
 ```bash
     struct LargePreimageProposalKeys {
@@ -153,62 +179,58 @@ Explanation
         address claimant;
         /// @notice The UUID of the large preimage proposal.
         uint256 uuid;
-    }
+
 ```
 
-Explanation
+`zeroHashes` are Pre-calculated "zero" hashes used in the Merkle tree to fill missing nodes. It helps maintain the tree's structure even when some branches are empty.
 
 ```bash
     bytes32[KECCAK_TREE_DEPTH] public zeroHashes;
 ```
 
-Explanation
+`proposals` is an array of large preimage proposal keys.
 
 ```bash
     LargePreimageProposalKeys[] public proposals;
 ```
 
-Explanation
+`proposalBranches` mapping that holds branches of the Merkle tree for each proposal, which is important for incremental verification
 
 ```bash
     mapping(address => mapping(uint256 => bytes32[KECCAK_TREE_DEPTH])) public proposalBranches;
 ```
 
-Explanation
-
+`proposalMetadata` Stores metadata for each proposal (unique to each \_owner and \_uuid). Likely includes offsets, sizes, and parts processed to help track the preimage’s current status.
 
 ```bash
     mapping(address => mapping(uint256 => LPPMetaData)) public proposalMetadata;
 ```
 
-Explanation
-
+`proposalBonds` stores the bond amount that each claimant has staked for a proposal. Bonds are reset upon successful payout, providing an incentive mechanism.
 
 ```bash
     mapping(address => mapping(uint256 => uint256)) public proposalBonds;
 ```
 
-Explanation
+`proposalParts` holds individual preimage parts submitted by each user (identified by msg.sender) for a specific proposal UUID.
 
 ```bash
     mapping(address => mapping(uint256 => bytes32)) public proposalParts;
 ```
 
-Explanation
+`proposalBlocks` is the mapping of claimants to proposal UUIDs to blocks which leaves were added to the merkle tree.
 
 ```bash
     mapping(address => mapping(uint256 => uint64[])) public proposalBlocks;
 ```
 
-Explanation
-
-
 The following functions are part of the Preimage Oracle contract and are all carefully and thoroghly intertwined for optimum performance.
 
-The flow: 
-- Constructor 
-- Getter 
-- Private 
+The flow:
+
+- Constructor
+- Getter
+- Private
 - External
 
 ### 2.1 constructor():
@@ -231,15 +253,19 @@ Explanation
 
 ### 2.2 proposalCount():
 
+This returns the total number of proposals in the contract.
+
+
 ```bash
    function proposalCount() external view returns (uint256 count_) {
         count_ = proposals.length;
     }
 ```
 
-Explain code
 
 #### 2.3 proposalBlocksLen():
+
+This function is a simple getter function that retrieves the length of the proposalBlocks array for a specific proposal.
 
 ```bash
       function proposalBlocksLen(address _claimant, uint256 _uuid) external view returns (uint256 len_) {
@@ -247,19 +273,19 @@ Explain code
     }
 ```
 
-Explain code
+
 
 #### 2.4 challengePeriod():
-
+This simply returns the `CHALLENGE_PERIOD` variable.
 ```bash
   function challengePeriod() external view returns (uint256 challengePeriod_) {
         challengePeriod_ = CHALLENGE_PERIOD;
     }
 ```
 
-Explain code
-
 #### 2.5 minProposalSize():
+
+This returns the `MIN_LPP_SIZE_BYTES`, the minimum size requirement for a proposal.
 
 ```bash
    function minProposalSize() external view returns (uint256 minProposalSize_) {
@@ -267,10 +293,8 @@ Explain code
     }
 ```
 
-Explain code
-
 #### 2.10 getTreeRootLPP();
-
+This function retrieves the current Merkle root of a proposal's tree. It iterates through tree heights, checking if a node is empty or filled and building the root based on stored branches and zeroHashes.
 ```bash
    function getTreeRootLPP(address _owner, uint256 _uuid) public view returns (bytes32 treeRoot_) {
         uint256 size = proposalMetadata[_owner][_uuid].blocksProcessed();
@@ -288,7 +312,9 @@ Explain code
 Explain code
 
 #### 2.10 \_verify();
-
+This function verifies if a specific leaf (data piece) matches a given Merkle root using a proof (Merkle branch) and an index.
+The function iterates over each branch, hashing nodes in the appropriate order (left or right depending on the index) to recreate the root.
+It returns true if the reconstructed root matches the provided root, indicating that the leaf is valid within this structure.
 ```bash
        function _verify(
         bytes32[] calldata _proof,
@@ -322,11 +348,8 @@ Explain code
     }
 ```
 
-Explain code
-
-
 #### 2.15 \_payoutBond();
-
+This function pays out the bond to the claimant.If the transfer fails, it reverts, ensuring that funds aren’t lost on payout failures.
 ```bash
  function _payoutBond(address _claimant, uint256 _uuid, address _to) internal {
         // Pay out the bond to the claimant.
@@ -337,31 +360,19 @@ Explain code
     }
 ```
 
-The \_payBond function
-
 #### 2.16 \_hashLeaf();
-
+This is a helper function that takes in a Leaf structure and hashes it. The leaf contains components like input, index, and stateCommitment, each contributing to the uniqueness and integrity of each leaf node in the Merkle tree.
 ```bash
     function _hashLeaf(Leaf memory _leaf) internal pure returns (bytes32 leaf_) {
         leaf_ = keccak256(abi.encodePacked(_leaf.input, _leaf.index, _leaf.stateCommitment));
     }
 ```
 
-Explain \_privateFunction 
-
-
-
-#### 2.16 \_hashLeaf();
-
-```bash
-    function _hashLeaf(Leaf memory _leaf) internal pure returns (bytes32 leaf_) {
-        leaf_ = keccak256(abi.encodePacked(_leaf.input, _leaf.index, _leaf.stateCommitment));
-    }
-```
 
 ### External Functions
 
 #### 2.16 readPreimage();
+The `readPreimage` function retrieves a specific part of a `preimage` (a piece of data associated with the _key) from storage. A preimage, in this context, is data that has been divided into parts and stored incrementally, with each part retrievable by an offset.
 ```bash
 function readPreimage(bytes32 _key, uint256 _offset) external view returns (bytes32 dat_, uint256 datLen_) {
         require(preimagePartOk[_key][_offset], "pre-image must exist");
@@ -378,10 +389,10 @@ function readPreimage(bytes32 _key, uint256 _offset) external view returns (byte
         dat_ = preimageParts[_key][_offset];
     }
 ```
-explanation
 
 
 #### 2.16 loadLocalData();
+The `loadLocalData` function is responsible for setting up a specific part of a data `preimage` (or piece of data) and storing it at an offset. This function uses a unique identifier and context to localize data in the contract's storage.
 ```bash
  function loadLocalData(
         uint256 _ident,
@@ -425,6 +436,7 @@ explanation
 ```
 
 #### 2.16 loadKeccak256PreimagePart();
+explanation
 ```bash
  function loadKeccak256PreimagePart(uint256 _partOffset, bytes calldata _preimage) external {
         uint256 size;
@@ -461,9 +473,8 @@ explanation
     }
 ```
 
-
-
 #### 2.16 loadBlobPreimagePart();
+The `loadBlobPreimagePart` function processes and verifies a data part using cryptographic techniques, specifically the KZG (Kate-Zaverucha-Goldberg) commitment scheme, which ensures data integrity. It creates a unique key for storing this part of data by hashing and sets up storage for verified parts. This function primarily ensures that only verified data (i.e., data that has passed a KZG proof check) is saved to the contract. 
 ```bash
  function loadBlobPreimagePart(
         uint256 _z,
@@ -557,6 +568,9 @@ explanation
 ```
 
 #### 2.16 loadKeccak256PreimagePart();
+
+The `loadPrecompilePreimagePart` function interacts with an Ethereum `precompile` address to load and store a data part in a structure. This function accepts an offset, precompile address, and input data, verifying bounds and preparing a unique key for storage. 
+
 ```bash
   function loadPrecompilePreimagePart(uint256 _partOffset, address _precompile, bytes calldata _input) external {
         bytes32 res;
@@ -620,7 +634,7 @@ explanation
 
 ### <h3 id="Qanalysis"> 3.1 Qualitative Analysis<h3>
 
-_(**Table: 3.1**: GovernorBravoDelegate G2 Qualitative Analysis)_
+_(**Table: 3.1**: PreimageOracle Qualitative Analysis)_
 | Metric | Rating | Comment |
 | :-------- | :------- | :----- |
 | Code Complexity | Excellent | Functionality is very simple and organized |
@@ -629,18 +643,14 @@ _(**Table: 3.1**: GovernorBravoDelegate G2 Qualitative Analysis)_
 
 ### <h3 id="summary">3.2 Summary<h3>
 
-In summary, the code appears to be well-structured and follows best practices for a Solidity smart contract. It includes essential functions for proposal creation, voting, and execution in a decentralized governance system. The code uses appropriate validation checks to ensure the integrity and security of the proposals. However, as with any code, continuous monitoring, testing, and potential optimizations are recommended to maintain its efficiency and reliability.
+In summary, the code appears to be well-structured and follows best practices for a Solidity smart contract and inline assembly. The code uses appropriate validation checks to ensure the integrity and security of the proposals. However, as with any code, continuous monitoring, testing, and potential optimizations are recommended to maintain its efficiency and reliability.
 
 ### <h3 id="recom">3.2 Recommendations<h3>
 
-Consider using the SafeMath library to ensure safe arithmetic operations to prevent overflow/underflow, instead of manually checking for overflow/underflow.
-
-```bash
-    using SafeMath for uint256;
-
-// Use like this: a.add(b) instead of a + b
-```
+Here are a few recommendations:
+- Simplify Complex Functions: Some functions are quite complex and may benefit from breaking down into smaller, more focused helper functions. For example, handling pre-image validation or offset management in separate, well-named functions would make the code easier to test and debug.
+- Optimize Key Computation Logic: The key computation relies on masking and bitwise operations. Consider breaking down the computation into smaller, named helper functions, possibly within a library, to make this key generation and manipulation process easier to follow.
 
 ## <h2 id="conclusion">4.0 CONCLUSION </h2>
 
-My Conclusion here
+My Conclusion hereThis codebase shows strong techniques for managing low-level memory operations and key handling, with a clear focus on optimizing performance through assembly and precise memory control. However, its complexity may make maintenance and security more challenging. By following the recommendations; improving readability, modularizing reusable code, and refining error handling-the contract can become more secure, readable, and maintainable. Adding detailed documentation will also streamline future reviews and help onboard new developers or auditors, making the contract more accessible and robust for the long term.
