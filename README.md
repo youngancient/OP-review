@@ -1,4 +1,4 @@
-| Client         | Compound Protocol Governance                    |
+| Client         | Optimism Fault dispute game                    |
 | :------------- | :---------------------------------------------- |
 | Title          | Smart Contract Audit Report                     |
 | Target         | PreimageOracle.sol                              |
@@ -15,8 +15,6 @@
   - <a href="#About"> 1.2 About Me </a>
   - <a href="#Skills"> 1.3 Skills</a>
   - <a href="#links"> 1.4 Link</a>
-  - <a href="#Cpg"> 1.5 Compound Governance</a>
-  - <a href="#Gbd"> 1.6 GovernorBravoDelegate</a>
   - <a href="#scope"> 1.7 Scope</a>
   - <a href="#roles"> 1.8 Roles</a>
   - <a href="#overview"> 1.9 System Overview</a>
