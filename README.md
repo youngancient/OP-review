@@ -86,7 +86,7 @@ On a high level perspective, the contract these 4 things:
 
 - #### Proposal Management
 
-  Users (possibly proposers or claimants) submit parts of large preimages in pieces, which are then stored securely and tied to a unique identifier (UUID). These preimages are validated with Merkle tree branches.
+  Users (proposers or claimants) submit parts of large preimages in pieces, which are then stored securely and tied to a unique identifier (UUID). These preimages are validated with Merkle tree branches.
 
 - #### Merkle Tree Verification
 
@@ -94,7 +94,7 @@ On a high level perspective, the contract these 4 things:
 
 - #### Bonded Proposals
 
-  Each proposal appears to have a "bond" (some stake or deposit) associated with it. This bond act as an incentive, possibly rewarding successful proposals and penalizing incomplete or invalid ones.
+  Each proposal appears to have a "bond" (some stake or deposit) associated with it. This bond act as an incentive, rewarding successful proposals and penalizing incomplete or invalid ones.
 
 - #### Data Integrity
 
@@ -114,37 +114,37 @@ The contract inherits from two base contracts; IPreimageOracle and ISemver.
 
 The contract contains the following state constant and immutable variables:
 
-This is the duration of the large preimage proposal challenge period.
+`CHALLENGE_PERIOD` is the duration of the large preimage proposal challenge period. 
 
 ```bash
     uint256 internal immutable CHALLENGE_PERIOD;
 ```
 
-This is the minimum size of a preimage that can be proposed in the large preimage path.
+`MIN_LPP_SIZE_BYTES` is the minimum size of a preimage that can be proposed in the large preimage path.
 
 ```bash
     uint256 internal immutable MIN_LPP_SIZE_BYTES;
 ```
 
-This is the minimum bond size for large preimage proposals.
+`MIN_BOND_SIZE` is the minimum bond size for large preimage proposals and is initialized as 0.25 ether.
 
 ```bash
     uint256 public constant MIN_BOND_SIZE = 0.25 ether;
 ```
 
-This defines the depth of the keccak256 merkle tree. Supports up to 65,536 keccak blocks, or ~8.91MB preimages.
+`KECCAK_TREE_DEPTH` defines the depth of the keccak256 merkle tree. Supports up to 65,536 keccak blocks, or ~8.91MB preimages. It's initialized as 16.
 
 ```bash
     uint256 public constant KECCAK_TREE_DEPTH = 16;
 ```
 
-This is the maximum number of keccak blocks that can fit into the merkle tree.
+`MAX_LEAF_COUNT` is the maximum number of keccak blocks that can fit into the merkle tree.
 
 ```bash
     uint256 public constant MAX_LEAF_COUNT = 2 ** KECCAK_TREE_DEPTH - 1;
 ```
 
-This defines the semantic version of the Preimage Oracle contract.
+`version` defines the semantic version of the Preimage Oracle contract.
 
 ```bash
     string public constant version = "1.0.0";
@@ -247,7 +247,8 @@ The flow:
     }
 ```
 
-Explanation
+On deployment, the deployer passes the `_minProposalSize` and `_challengePeriod` which are set to `MIN_LPP_SIZE_BYTES` and `CHALLENGE_PERIOD` respectively.
+Based on the `KECCAK_TREE_DEPTH` there's a for loop which computes zerohashes.
 
 ### Getter Functions
 
@@ -653,4 +654,4 @@ Here are a few recommendations:
 
 ## <h2 id="conclusion">4.0 CONCLUSION </h2>
 
-My Conclusion hereThis codebase shows strong techniques for managing low-level memory operations and key handling, with a clear focus on optimizing performance through assembly and precise memory control. However, its complexity may make maintenance and security more challenging. By following the recommendations; improving readability, modularizing reusable code, and refining error handling-the contract can become more secure, readable, and maintainable. Adding detailed documentation will also streamline future reviews and help onboard new developers or auditors, making the contract more accessible and robust for the long term.
+My Conclusion here this codebase shows strong techniques for managing low-level memory operations and key handling, with a clear focus on optimizing performance through assembly and precise memory control. However, its complexity may make maintenance and security more challenging. By following the recommendations; improving readability, modularizing reusable code, and refining error handling-the contract can become more secure, readable, and maintainable. Adding detailed documentation will also streamline future reviews and help onboard new developers or auditors, making the contract more accessible and robust for the long term.
