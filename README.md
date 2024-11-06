@@ -437,7 +437,8 @@ The `loadLocalData` function is responsible for setting up a specific part of a 
 ```
 
 #### 2.16 loadKeccak256PreimagePart();
-explanation
+`loadKeccak256PreimagePart` takes the calldata, copies it into memory, computes its Keccak-256 hash, and then stores specific parts of the preimage in mappings for later use. 
+It also checks for out-of-bounds access and adjusts memory carefully for the size and part variables.
 ```bash
  function loadKeccak256PreimagePart(uint256 _partOffset, bytes calldata _preimage) external {
         uint256 size;
